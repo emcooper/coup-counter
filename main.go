@@ -5,6 +5,9 @@ import (
     "log"
     "net/http"
     "github.com/gorilla/mux"
+    "database/sql"
+    _"github.com/lib/pq"
+    // "io/ioutil"
 )
 
 
@@ -13,23 +16,40 @@ type Game struct {
     Name string   `json:"name,omitempty"`
 }
 
-var games []Game
+
 
 
 
 
 func GetPeople(w http.ResponseWriter, r *http.Request) {
-    json.NewEncoder(w).Encode(games)
+  games, err := store.GetGames()
+  if err != nil {
+
+  }
+  json.NewEncoder(w).Encode(games)
 }
+
 func GetPerson(w http.ResponseWriter, r *http.Request) {}
 func CreatePerson(w http.ResponseWriter, r *http.Request) {}
 func DeletePerson(w http.ResponseWriter, r *http.Request) {}
 
 // our main function
 func main() {
+    connString := "dbname=coup_counter_development sslmode=disable"
+    db, err := sql.Open("postgres", connString)
+
+    if err != nil {
+      panic(err)
+    }
+    err = db.Ping()
+
+    if err != nil {
+      panic(err)
+    }
+
+    InitStore(&dbStore{db: db})
     router := mux.NewRouter()
-    games = append(games, Game{ID: "1", Name: "Coup"})
-    games = append(games, Game{ID: "2", Name: "7 Wonders"})
+
     router.HandleFunc("/people", GetPeople).Methods("GET")
     router.HandleFunc("/people/{id}", GetPerson).Methods("GET")
     router.HandleFunc("/people/{id}", CreatePerson).Methods("POST")
