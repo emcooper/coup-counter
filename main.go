@@ -17,11 +17,7 @@ type Game struct {
 }
 
 
-
-
-
-
-func GetPeople(w http.ResponseWriter, r *http.Request) {
+func GetGames(w http.ResponseWriter, r *http.Request) {
   games, err := store.GetGames()
   if err != nil {
 
@@ -29,9 +25,7 @@ func GetPeople(w http.ResponseWriter, r *http.Request) {
   json.NewEncoder(w).Encode(games)
 }
 
-func GetPerson(w http.ResponseWriter, r *http.Request) {}
-func CreatePerson(w http.ResponseWriter, r *http.Request) {}
-func DeletePerson(w http.ResponseWriter, r *http.Request) {}
+func CreateGame(w http.ResponseWriter, r *http.Request) {}
 
 // our main function
 func main() {
@@ -50,9 +44,7 @@ func main() {
     InitStore(&dbStore{db: db})
     router := mux.NewRouter()
 
-    router.HandleFunc("/people", GetPeople).Methods("GET")
-    router.HandleFunc("/people/{id}", GetPerson).Methods("GET")
-    router.HandleFunc("/people/{id}", CreatePerson).Methods("POST")
-    router.HandleFunc("/people/{id}", DeletePerson).Methods("DELETE")
+    router.HandleFunc("/games", GetGames).Methods("GET")
+    router.HandleFunc("/games", CreateGame).Methods("POST")
     log.Fatal(http.ListenAndServe(":8000", router))
 }
