@@ -58,4 +58,5 @@ func main() {
 	router.HandleFunc("/", GetGames).Methods("GET")
 	router.HandleFunc("/games", CreateGame).Methods("POST")
 	// log.Fatal(http.ListenAndServe(":8000", router))
+	log.Fatal(http.ListenAndServe(":" + os.Getenv("PORT"), router))
 }
