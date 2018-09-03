@@ -8,8 +8,8 @@ import (
 	"os"
 
 	"github.com/gorilla/mux"
+	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
-	// "io/ioutil"
 )
 
 type Game struct {
@@ -28,12 +28,11 @@ func GetGames(w http.ResponseWriter, r *http.Request) {
 
 func CreateGame(w http.ResponseWriter, r *http.Request) {}
 
-// our main function
 func main() {
 	log.Println("Welcome Coup-Counter")
-	// connString := "dbname=coup_counter_development sslmode=disable"
-	// db, err := sql.Open("postgres", connString)
-	log.Println("Opening db connection")
+  godotenv.Load()
+  
+	log.Printf("Opening db connection with database url: %v", os.Getenv("DATABASE_URL"))
 	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 
 	if err != nil {
@@ -56,7 +55,8 @@ func main() {
 
 	router.HandleFunc("/games", GetGames).Methods("GET")
 	router.HandleFunc("/", GetGames).Methods("GET")
-	router.HandleFunc("/games", CreateGame).Methods("POST")
-	// log.Fatal(http.ListenAndServe(":8000", router))
-	log.Fatal(http.ListenAndServe(":" + os.Getenv("PORT"), router))
+  router.HandleFunc("/games", CreateGame).Methods("POST")
+  
+	log.Printf("Listening on port %v", os.Getenv("PORT"))
+	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
 }
