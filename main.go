@@ -18,6 +18,7 @@ type Game struct {
 }
 
 func GetGames(w http.ResponseWriter, r *http.Request) {
+  log.Println("Getting games")
 	games, err := store.GetGames()
 	if err != nil {
 
