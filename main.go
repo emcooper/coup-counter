@@ -54,6 +54,7 @@ func main() {
 	router := mux.NewRouter()
 
 	router.HandleFunc("/games", GetGames).Methods("GET")
+	router.HandleFunc("/", GetGames).Methods("GET")
 	router.HandleFunc("/games", CreateGame).Methods("POST")
 	log.Fatal(http.ListenAndServe(":8000", router))
 }
