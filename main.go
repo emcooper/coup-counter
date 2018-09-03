@@ -18,7 +18,7 @@ type Game struct {
 }
 
 func GetGames(w http.ResponseWriter, r *http.Request) {
-  log.Println("Getting games")
+	log.Println("Getting games")
 	games, err := store.GetGames()
 	if err != nil {
 
@@ -57,5 +57,5 @@ func main() {
 	router.HandleFunc("/games", GetGames).Methods("GET")
 	router.HandleFunc("/", GetGames).Methods("GET")
 	router.HandleFunc("/games", CreateGame).Methods("POST")
-	log.Fatal(http.ListenAndServe(":8000", router))
+	// log.Fatal(http.ListenAndServe(":8000", router))
 }
