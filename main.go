@@ -5,8 +5,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-  "os"
-  "logs"
+	"os"
 
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
@@ -30,26 +29,26 @@ func CreateGame(w http.ResponseWriter, r *http.Request) {}
 
 // our main function
 func main() {
-  log.Println("Welcome Coup-Counter")
+	log.Println("Welcome Coup-Counter")
 	// connString := "dbname=coup_counter_development sslmode=disable"
-  // db, err := sql.Open("postgres", connString)
-  log.Println("Opening db connection")
-  db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
-  
+	// db, err := sql.Open("postgres", connString)
+	log.Println("Opening db connection")
+	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
+
 	if err != nil {
-    log.Println("Panicing")
+		log.Println("Panicing")
 		panic(err)
-  }
-  log.Println("Pinging db")
+	}
+	log.Println("Pinging db")
 
 	err = db.Ping()
 
 	if err != nil {
-    log.Println("Panicing")
+		log.Println("Panicing")
 		panic(err)
-  }
-  
-  log.Println("Initializing store")
+	}
+
+	log.Println("Initializing store")
 
 	InitStore(&dbStore{db: db})
 	router := mux.NewRouter()
