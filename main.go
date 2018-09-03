@@ -26,6 +26,15 @@ func GetGames(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(games)
 }
 
+func Migrate(w http.ResponseWriter, r *http.Request){
+  log.Println("Running migrations")
+
+  err := store.Migrate()
+  if err != nil {
+    log.Println(err)
+  }
+}
+
 func CreateGame(w http.ResponseWriter, r *http.Request) {}
 
 func main() {
@@ -53,10 +62,12 @@ func main() {
 	InitStore(&dbStore{db: db})
 	router := mux.NewRouter()
 
-	router.HandleFunc("/games", GetGames).Methods("GET")
+  router.HandleFunc("/games", GetGames).Methods("GET")
 	router.HandleFunc("/", GetGames).Methods("GET")
   router.HandleFunc("/games", CreateGame).Methods("POST")
+  router.HandleFunc("/migrate", Migrate).Methods("GET")
   
 	log.Printf("Listening on port %v", os.Getenv("PORT"))
 	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
 }
+

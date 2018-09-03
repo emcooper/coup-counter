@@ -7,6 +7,7 @@ import (
 type Store interface {
 	CreateGame(game *Game) error
 	GetGames() ([]*Game, error)
+	Migrate() error
 }
 
 // The `dbStore` struct will implement the `Store` interface
@@ -52,6 +53,12 @@ func (store *dbStore) GetGames() ([]*Game, error) {
 	}
 	return games, nil
 }
+
+func (store *dbStore) Migrate() error {
+	_, err := store.db.Query("CREATE TABLE IF NOT EXISTS games (name varchar(40))")
+	return err
+ }
+
 
 // The store variable is a package level variable that will be available for
 // use throughout our application code
