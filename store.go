@@ -55,7 +55,19 @@ func (store *dbStore) GetGames() ([]*Game, error) {
 }
 
 func (store *dbStore) Migrate() error {
-	_, err := store.db.Query("CREATE TABLE IF NOT EXISTS games (name varchar(40))")
+	_, err := store.db.Query("CREATE TABLE IF NOT EXISTS games (id SERIAL PRIMARY KEY, name VARCHAR(255), created_at DATE NOT NULL DEFAULT CURRENT_DATE)")
+	if err != nil {
+		return err
+	}	
+	_, err = store.db.Query("CREATE TABLE IF NOT EXISTS rounds (id SERIAL PRIMARY KEY, date DATE DEFAULT NULL, game_id INTEGER REFERENCES games(id), created_at DATE NOT NULL DEFAULT CURRENT_DATE)")
+	if err != nil {
+		return err
+	}	
+	_, err = store.db.Query("CREATE TABLE IF NOT EXISTS players (id SERIAL PRIMARY KEY, name VARCHAR(255), created_at DATE NOT NULL DEFAULT CURRENT_DATE)")
+	if err != nil {
+		return err
+	}	
+	_, err = store.db.Query("CREATE TABLE IF NOT EXISTS coup_results (id SERIAL PRIMARY KEY, round_id INTEGER REFERENCES rounds(id), player_id INTEGER REFERENCES players(id), winner BOOLEAN, winning_card_one VARCHAR(255), winning_card_two VARCHAR(255), created_at DATE NOT NULL DEFAULT CURRENT_DATE)")
 	return err
  }
 
