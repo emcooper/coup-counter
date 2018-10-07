@@ -79,7 +79,6 @@ func createCoupRound(w http.ResponseWriter, r *http.Request) {
 	}
 
 	for _, result := range results.Results {
-		log.Println(result.PlayerId)
 		result.RoundId = round.ID
 		err = store.CreateCoupResult(&result)
 	}
