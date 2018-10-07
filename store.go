@@ -6,6 +6,8 @@ import (
 
 type Store interface {
 	CreateGame(game *Game) error
+	CreateRound(round *Round) (Round, error)
+	CreateCoupResult(result *CoupResult) error 
 	GetGames() ([]*Game, error)
 	Migrate() error
 }
@@ -54,23 +56,38 @@ func (store *dbStore) GetGames() ([]*Game, error) {
 	return games, nil
 }
 
+func (store *dbStore) CreateRound(round *Round) (Round, error) {
+	var insertId int
+	err := store.db.QueryRow("INSERT INTO rounds(date, game_id) VALUES ($1, $2) RETURNING id", round.Date, round.GameId).Scan(&insertId)
+	if err != nil {
+		return *round, err
+	}
+	
+	round.ID = insertId
+	return *round, err
+}
+
+func (store *dbStore) CreateCoupResult(result *CoupResult) error {
+	_, err := store.db.Query("INSERT INTO coup_results(round_id, player_id, winner, winning_card_one, winning_card_two) VALUES ($1, $2, $3, $4, $5)", result.RoundId, result.PlayerId, result.Winner, result.WinningCardOne, result.WinningCardTwo)
+	return err
+}
+
 func (store *dbStore) Migrate() error {
 	_, err := store.db.Query("CREATE TABLE IF NOT EXISTS games (id SERIAL PRIMARY KEY, name VARCHAR(255), created_at DATE NOT NULL DEFAULT CURRENT_DATE)")
 	if err != nil {
 		return err
-	}	
+	}
 	_, err = store.db.Query("CREATE TABLE IF NOT EXISTS rounds (id SERIAL PRIMARY KEY, date DATE DEFAULT NULL, game_id INTEGER REFERENCES games(id), created_at DATE NOT NULL DEFAULT CURRENT_DATE)")
 	if err != nil {
 		return err
-	}	
+	}
 	_, err = store.db.Query("CREATE TABLE IF NOT EXISTS players (id SERIAL PRIMARY KEY, name VARCHAR(255), created_at DATE NOT NULL DEFAULT CURRENT_DATE)")
 	if err != nil {
 		return err
-	}	
+	}
 	_, err = store.db.Query("CREATE TABLE IF NOT EXISTS coup_results (id SERIAL PRIMARY KEY, round_id INTEGER REFERENCES rounds(id), player_id INTEGER REFERENCES players(id), winner BOOLEAN, winning_card_one VARCHAR(255), winning_card_two VARCHAR(255), created_at DATE NOT NULL DEFAULT CURRENT_DATE)")
 	return err
- }
-
+}
 
 // The store variable is a package level variable that will be available for
 // use throughout our application code
