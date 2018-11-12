@@ -43,6 +43,7 @@ type CoupResultsWrapper struct {
 }
 
 func GetGames(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	log.Println("Getting games")
 	games, err := store.GetGames()
 	if err != nil {
@@ -124,4 +125,8 @@ func main() {
 
 	log.Printf("Listening on port %v", os.Getenv("PORT"))
 	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
+}
+
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
 }
