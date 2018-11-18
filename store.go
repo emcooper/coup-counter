@@ -9,6 +9,7 @@ type Store interface {
 	CreateRound(round *Round) (Round, error)
 	CreateCoupResult(result *CoupResult) error 
 	GetGames() ([]*Game, error)
+	GetPlayers() ([]*Player, error)
 	Migrate() error
 }
 
@@ -54,6 +55,26 @@ func (store *dbStore) GetGames() ([]*Game, error) {
 		games = append(games, game)
 	}
 	return games, nil
+}
+
+func(store *dbStore) GetPlayers()([]*Player, error){
+	rows, err := store.db.Query("SELECT id, name from players")
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	players := []*Player{}
+
+	for rows.Next() {
+		player := &Player{}
+		if err := rows.Scan(&player.ID, &player.Name); err != nil {
+			return nil, err
+		}
+		players = append(players, player)
+	}
+	return players, nil
 }
 
 func (store *dbStore) CreateRound(round *Round) (Round, error) {

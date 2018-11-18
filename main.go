@@ -52,6 +52,16 @@ func GetGames(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(games)
 }
 
+func GetPlayers(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+	log.Println("Getting players")
+	players, err := store.GetPlayers()
+	if err != nil {
+
+	}
+	json.NewEncoder(w).Encode(players)
+}
+
 func Migrate(w http.ResponseWriter, r *http.Request) {
 	log.Println("Running migrations")
 
@@ -122,6 +132,7 @@ func main() {
 	router.HandleFunc("/games", CreateGame).Methods("POST")
 	router.HandleFunc("/migrate", Migrate).Methods("GET")
 	router.HandleFunc("/games/coup", createCoupRound).Methods("POST")
+	router.HandleFunc("/players", GetPlayers).Methods("GET")
 
 	log.Printf("Listening on port %v", os.Getenv("PORT"))
 	log.Fatal(http.ListenAndServe(":"+os.Getenv("PORT"), router))
