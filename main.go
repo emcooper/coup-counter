@@ -72,6 +72,7 @@ func Migrate(w http.ResponseWriter, r *http.Request) {
 }
 
 func createCoupRound(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
 	log.Println("Adding Coup Round")
 
 	var round Round
