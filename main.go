@@ -132,7 +132,7 @@ func main() {
 	router.HandleFunc("/", GetGames).Methods("GET")
 	router.HandleFunc("/games", CreateGame).Methods("POST")
 	router.HandleFunc("/migrate", Migrate).Methods("GET")
-	router.HandleFunc("/games/coup", createCoupRound).Methods("POST")
+	router.HandleFunc("/games/coup", createCoupRound).Methods("POST", "OPTIONS")
 	router.HandleFunc("/players", GetPlayers).Methods("GET")
 
 	log.Printf("Listening on port %v", os.Getenv("PORT"))
